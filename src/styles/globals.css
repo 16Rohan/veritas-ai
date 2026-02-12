@@ -1,0 +1,136 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  background-color: #050608;
+  color: #ffffff;
+  overflow-x: hidden;
+}
+
+/* Glassmorphism utility */
+.glass {
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+}
+
+/* Gradient text utility */
+.gradient-text {
+  background: linear-gradient(to right, #00FFC6, #8A2BE2);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* Glow effects */
+.glow-cyan {
+  box-shadow: 0 0 20px rgba(0, 255, 198, 0.5);
+}
+
+.glow-purple {
+  box-shadow: 0 0 20px rgba(138, 43, 226, 0.5);
+}
+
+.glow-red {
+  box-shadow: 0 0 20px rgba(255, 76, 76, 0.6);
+}
+
+.glow-amber {
+  box-shadow: 0 0 20px rgba(255, 165, 0, 0.6);
+}
+
+.glow-green {
+  box-shadow: 0 0 20px rgba(0, 255, 136, 0.6);
+}
+
+/* Smooth transitions */
+.transition-fast {
+  transition: all 0.2s ease;
+}
+
+/* Subtle floating animation for cards and icons */
+.float-slow {
+  animation: float-slow 6s ease-in-out infinite;
+}
+
+/* Soft glow pulse used for important metrics */
+.animate-glow-pulse {
+  animation: glow-pulse 2.4s ease-in-out infinite;
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.05);
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(0, 255, 198, 0.3);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(0, 255, 198, 0.5);
+}
+
+/* Focus styles for accessibility */
+*:focus-visible {
+  outline: 2px solid #00FFC6;
+  outline-offset: 2px;
+}
+
+/* Animated background gradient */
+.animated-gradient {
+  background: linear-gradient(135deg, #050608 0%, #161825 50%, #050608 100%);
+  background-size: 200% 200%;
+  animation: gradient-shift 15s ease infinite;
+}
+
+@keyframes gradient-shift {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+@keyframes float-slow {
+  0% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-6px);
+  }
+  100% {
+    transform: translateY(0px);
+  }
+}
+
+@keyframes glow-pulse {
+  0% {
+    box-shadow: 0 0 0 rgba(0, 245, 255, 0.0);
+  }
+  50% {
+    box-shadow: 0 0 24px rgba(0, 245, 255, 0.5);
+  }
+  100% {
+    box-shadow: 0 0 0 rgba(0, 245, 255, 0.0);
+  }
+}
