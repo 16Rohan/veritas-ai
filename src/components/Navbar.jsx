@@ -20,6 +20,7 @@ const Navbar = () => {
     { name: 'Message Scanner', path: '/message' },
     { name: 'Link Scanner', path: '/link' },
     { name: 'Fake News Detector', path: '/news' },
+    { name: 'Cyber Awareness', path: '/awareness' },
     { name: 'Dashboard', path: '/dashboard' },
     ...(isAuthenticated ? [] : [{ name: 'Sign In', path: '/signin' }])
   ];
