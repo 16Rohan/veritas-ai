@@ -1,10 +1,18 @@
 import { useState } from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
+import { authService } from '../utils/authService';
 
 const Navbar = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const location = useLocation();
+  const navigate = useNavigate();
+  const isAuthenticated = authService.isAuthenticated();
+
+  const handleLogout = async () => {
+    await authService.logout();
+    navigate('/signin');
+  };
 
   const navLinks = [
     { name: 'Home', path: '/' },
@@ -13,7 +21,7 @@ const Navbar = () => {
     { name: 'Link Scanner', path: '/link' },
     { name: 'Fake News Detector', path: '/news' },
     { name: 'Dashboard', path: '/dashboard' },
-    { name: 'Sign In', path: '/signin' }
+    ...(isAuthenticated ? [] : [{ name: 'Sign In', path: '/signin' }])
   ];
 
   return (
@@ -55,6 +63,14 @@ const Navbar = () => {
                 )}
               </Link>
             ))}
+            {isAuthenticated && (
+              <button
+                onClick={handleLogout}
+                className="px-4 py-2 text-sm font-medium text-gray-300 hover:text-white transition-fast font-body tracking-wide"
+              >
+                Logout
+              </button>
+            )}
           </div>
 
           {/* Mobile menu button */}

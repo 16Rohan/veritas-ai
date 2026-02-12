@@ -115,7 +115,7 @@ const Home = () => {
               transition={{ duration: 0.5, delay: 0.1, ease: 'easeOut' }}
               className="text-xl md:text-2xl text-gray-300 mb-12 max-w-3xl mx-auto font-serif"
             >
-              Analyze emails, messages, links, and news in real-time using explainable machine learning.
+              Analyze emails, BEC'S, links, and news in real-time using explainable machine learning.
             </motion.p>
 
             <motion.button

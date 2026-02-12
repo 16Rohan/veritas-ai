@@ -1,18 +1,47 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
+import { authService } from '../utils/authService';
 
 const SignIn = () => {
-  const [name, setName] = useState('');
+  const [isSignUp, setIsSignUp] = useState(false);
+  const [username, setUsername] = useState('');
   const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [error, setError] = useState('');
+  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    if (name.trim() && email.trim()) {
-      localStorage.setItem('userName', name);
-      localStorage.setItem('userEmail', email);
-      navigate('/');
+    setError('');
+    setLoading(true);
+
+    try {
+      if (isSignUp) {
+        if (!username.trim() || !email.trim() || !password.trim()) {
+          setError('Please fill in all fields');
+          setLoading(false);
+          return;
+        }
+        const response = await authService.signUp(username, email, password);
+        authService.setToken(response.token);
+        authService.setUser(response.user);
+      } else {
+        if (!email.trim() || !password.trim()) {
+          setError('Please enter email and password');
+          setLoading(false);
+          return;
+        }
+        const response = await authService.signIn(email, password);
+        authService.setToken(response.token);
+        authService.setUser(response.user);
+      }
+      navigate('/dashboard');
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Authentication failed');
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -35,25 +64,37 @@ const SignIn = () => {
               Welcome to VeritasAI
             </h1>
             <p className="text-gray-400 font-serif">
-              Sign in to access your security dashboard
+              {isSignUp ? 'Create an account' : 'Sign in to access your security dashboard'}
             </p>
           </div>
 
+          {error && (
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              className="mb-4 p-3 bg-red-500/20 border border-red-500/50 rounded-lg text-red-400 text-sm"
+            >
+              {error}
+            </motion.div>
+          )}
+
           <form onSubmit={handleSubmit} className="space-y-6">
-            <div>
-              <label htmlFor="name" className="block text-white font-semibold mb-2">
-                Name
-              </label>
-              <input
-                id="name"
-                type="text"
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-                placeholder="Enter your name"
-                className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white placeholder-gray-500 focus:outline-none focus:border-neon-cyan focus:glow-cyan transition-fast"
-                required
-              />
-            </div>
+            {isSignUp && (
+              <div>
+                <label htmlFor="username" className="block text-white font-semibold mb-2">
+                  Username
+                </label>
+                <input
+                  id="username"
+                  type="text"
+                  value={username}
+                  onChange={(e) => setUsername(e.target.value)}
+                  placeholder="Enter your username"
+                  className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white placeholder-gray-500 focus:outline-none focus:border-neon-cyan focus:glow-cyan transition-fast"
+                  required={isSignUp}
+                />
+              </div>
+            )}
 
             <div>
               <label htmlFor="email" className="block text-white font-semibold mb-2">
@@ -70,18 +111,49 @@ const SignIn = () => {
               />
             </div>
 
+            <div>
+              <label htmlFor="password" className="block text-white font-semibold mb-2">
+                Password
+              </label>
+              <input
+                id="password"
+                type="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                placeholder="Enter your password"
+                className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white placeholder-gray-500 focus:outline-none focus:border-neon-cyan focus:glow-cyan transition-fast"
+                required
+              />
+            </div>
+
             <motion.button
               type="submit"
+              disabled={loading}
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.98 }}
-              className="w-full px-8 py-3 bg-gradient-to-r from-neon-cyan to-electric-purple rounded-xl font-bold text-white glow-cyan transition-fast"
+              className="w-full px-8 py-3 bg-gradient-to-r from-neon-cyan to-electric-purple rounded-xl font-bold text-white glow-cyan transition-fast disabled:opacity-50"
             >
-              Sign In
+              {loading ? 'Loading...' : isSignUp ? 'Sign Up' : 'Sign In'}
             </motion.button>
           </form>
 
-          <div className="mt-6 text-center text-sm text-gray-500">
-            <p>Demo mode - No real authentication required</p>
+          <div className="mt-6 text-center text-sm text-gray-400">
+            <p>
+              {isSignUp ? 'Already have an account?' : "Don't have an account?"}{' '}
+              <button
+                type="button"
+                onClick={() => {
+                  setIsSignUp(!isSignUp);
+                  setError('');
+                  setUsername('');
+                  setEmail('');
+                  setPassword('');
+                }}
+                className="text-neon-cyan hover:text-electric-purple transition-fast font-semibold"
+              >
+                {isSignUp ? 'Sign In' : 'Sign Up'}
+              </button>
+            </p>
           </div>
         </div>
 
