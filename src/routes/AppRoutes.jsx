@@ -6,6 +6,7 @@ import MessageDetection from '../pages/MessageDetection';
 import LinkDetection from '../pages/LinkDetection';
 import NewsDetection from '../pages/NewsDetection';
 import Dashboard from '../pages/Dashboard';
+import LearningHub from '../pages/LearningHub';
 import SignIn from '../pages/SignIn';
 import Awareness from '../pages/Awareness';
 import { ProtectedRoute } from './ProtectedRoute';
@@ -23,6 +24,7 @@ const AppRoutes = () => {
         <Route path="/news" element={<NewsDetection />} />
         <Route path="/awareness" element={<Awareness />} />
         <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
+        <Route path="/learning-hub" element={<LearningHub />} />
         <Route path="/signin" element={<SignIn />} />
       </Routes>
     </AnimatePresence>

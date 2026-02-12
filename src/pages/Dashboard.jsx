@@ -1,18 +1,27 @@
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { PieChart, Pie, Cell, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, LineChart, Line, Legend } from 'recharts';
-import { getDashboardStats } from '../utils/mockApi';
+import { getDashboardStats } from '../utils/dashboardApi';
 import RiskBadge from '../components/RiskBadge';
 
 const Dashboard = () => {
   const [stats, setStats] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
     const loadStats = async () => {
-      const data = await getDashboardStats();
-      setStats(data);
-      setLoading(false);
+      setLoading(true);
+      setError(null);
+      try {
+        const data = await getDashboardStats();
+        setStats(data);
+      } catch (err) {
+        console.error('Failed to load dashboard stats:', err);
+        setError(err instanceof Error ? err.message : 'Failed to load dashboard');
+      } finally {
+        setLoading(false);
+      }
     };
     loadStats();
   }, []);
@@ -42,6 +51,17 @@ const Dashboard = () => {
         <div className="text-center">
           <div className="animate-spin rounded-full h-16 w-16 border-t-2 border-b-2 border-neon-cyan mx-auto mb-4"></div>
           <p className="text-gray-400">Loading dashboard...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="min-h-screen pt-24 pb-12 px-4 flex items-center justify-center">
+        <div className="text-center max-w-md">
+          <p className="text-red-400 mb-2">Failed to load dashboard data.</p>
+          <p className="text-gray-400 text-sm">{error}</p>
         </div>
       </div>
     );

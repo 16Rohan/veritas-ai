@@ -22,6 +22,7 @@ const Navbar = () => {
     { name: 'Fake News Detector', path: '/news' },
     { name: 'Cyber Awareness', path: '/awareness' },
     { name: 'Dashboard', path: '/dashboard' },
+    { name: 'Learning Hub', path: '/learning-hub' },
     ...(isAuthenticated ? [] : [{ name: 'Sign In', path: '/signin' }])
   ];
 
@@ -122,11 +123,10 @@ const Navbar = () => {
                   key={link.path}
                   to={link.path}
                   onClick={() => setMobileMenuOpen(false)}
-                  className={`block px-4 py-2 rounded-lg text-sm font-medium transition-fast ${
-                    location.pathname === link.path
+                  className={`block px-4 py-2 rounded-lg text-sm font-medium transition-fast ${location.pathname === link.path
                       ? 'bg-neon-cyan/10 text-neon-cyan glow-cyan'
                       : 'text-gray-300 hover:bg-white/5 hover:text-white'
-                  }`}
+                    }`}
                 >
                   {link.name}
                 </Link>

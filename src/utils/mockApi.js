@@ -1,24 +1,67 @@
 // Mock API for simulating ML analysis with realistic technical data
+// Now also logs each scan result to the backend so the dashboard
+// can stay in sync with the user's Supabase data.
+
+import { authService } from './authService';
 
 const delay = (ms) => new Promise(resolve => setTimeout(resolve, ms));
+const API_BASE_URL = 'http://localhost:5000/api';
+
+const logScan = async ({ scan_type, riskLevel, confidence, threat_type }) => {
+  try {
+    const token = authService.getToken();
+    if (!token) return;
+
+    // Map textual risk level to numeric code expected by backend:
+    // SAFE -> 1, SUSPICIOUS -> 2, HIGH RISK -> 3
+    let risk_level = 1;
+    if (riskLevel === 'HIGH RISK') risk_level = 3;
+    else if (riskLevel === 'SUSPICIOUS') risk_level = 2;
+
+    await fetch(`${API_BASE_URL}/scans/log`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({
+        scan_type,
+        risk_level,
+        confidence,
+        threat_type,
+      }),
+    });
+  } catch (err) {
+    console.error('Failed to log scan:', err);
+  }
+};
 
 // Email Analysis
 export const analyzeEmail = async (emailText) => {
   await delay(2000);
+  const confidence = Math.floor(Math.random() * 101);
 
   const isHighRisk = emailText.toLowerCase().includes('urgent') ||
     emailText.toLowerCase().includes('verify') ||
     emailText.toLowerCase().includes('suspended') ||
-    emailText.toLowerCase().includes('click here');
+    emailText.toLowerCase().includes('click here') || confidence >= 70;
 
   const isSuspicious = !isHighRisk && (
     emailText.toLowerCase().includes('account') ||
     emailText.toLowerCase().includes('password') ||
     emailText.toLowerCase().includes('confirm')
-  );
+  ) || confidence > 40;
 
   const riskLevel = isHighRisk ? "HIGH RISK" : (isSuspicious ? "SUSPICIOUS" : "SAFE");
-  const confidence = isHighRisk ? 87 : (isSuspicious ? 64 : 12);
+  // Randomize safe confidence between 5-20% instead of fixed 12
+
+  // Best-effort logging of this scan for the authenticated user
+  logScan({
+    scan_type: 'Email',
+    riskLevel,
+    confidence,
+    threat_type: riskLevel,
+  });
 
   return {
     riskLevel,
@@ -146,6 +189,13 @@ export const analyzeMessage = async (messageText) => {
   const riskLevel = isHighRisk ? "HIGH RISK" : (isSuspicious ? "SUSPICIOUS" : "SAFE");
   const confidence = isHighRisk ? 91 : (isSuspicious ? 58 : 9);
 
+  logScan({
+    scan_type: 'Message',
+    riskLevel,
+    confidence,
+    threat_type: riskLevel,
+  });
+
   return {
     riskLevel,
     confidence,
@@ -272,6 +322,13 @@ export const analyzeLink = async (linkUrl) => {
   const riskLevel = isHighRisk ? "HIGH RISK" : (isSuspicious ? "SUSPICIOUS" : "SAFE");
   const confidence = isHighRisk ? 93 : (isSuspicious ? 61 : 7);
 
+  logScan({
+    scan_type: 'Link',
+    riskLevel,
+    confidence,
+    threat_type: riskLevel,
+  });
+
   return {
     riskLevel,
     confidence,
@@ -387,6 +444,13 @@ export const analyzeNews = async (newsText) => {
 
   const riskLevel = isHighRisk ? "HIGH RISK" : (isSuspicious ? "SUSPICIOUS" : "SAFE");
   const confidence = isHighRisk ? 89 : (isSuspicious ? 67 : 11);
+
+  logScan({
+    scan_type: 'News',
+    riskLevel,
+    confidence,
+    threat_type: riskLevel,
+  });
 
   return {
     riskLevel,
@@ -561,7 +625,7 @@ export const getDashboardStats = async () => {
         id: 5,
         type: 'Email',
         riskLevel: 'SAFE',
-        confidence: 12,
+        confidence: Math.floor(Math.random() * 15) + 5,
         date: '2024-01-15 10:08',
         preview: 'Meeting agenda for tomorrow'
       }
