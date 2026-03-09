@@ -26,3 +26,13 @@ dist-ssr
 *.md
 !README.md
 .env
+
+*.csv
+
+.ipynb_checkpoints/
+
+__pycache__/
+
+*.pkl
+*.h5
+*.pt
